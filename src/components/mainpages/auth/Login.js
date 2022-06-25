@@ -1,0 +1,63 @@
+import React, {useState} from 'react'
+import {Link} from 'react-router-dom'
+import axios from 'axios'
+import undraw_shopping from '../images/undraw_shopping.svg'
+
+function Login() {
+    const [user, setUser] = useState({
+        email:'', password: ''
+    })
+    const [error,Seterror]=useState("");
+
+    const onChangeInput = e =>{
+        const {name, value} = e.target;
+        setUser({...user, [name]:value})
+    }
+
+    const loginSubmit = async e =>{
+        e.preventDefault()
+        try {
+            await axios.post('/user/login', {...user})
+
+            localStorage.setItem('firstLogin', true)
+            
+            window.location.href = "/";
+        } catch (err) {
+            alert(err.response.data.msg)
+            Seterror(err.response.data.msg)
+        }
+    }
+    return (
+        <div className='container d-md-flex justify-content-sm-around mt-5'>
+        {/* <div className='container mt-5'>
+           <img src={undraw_shopping} class="img-fluid ${3|rounded-top,rounded-right,rounded-bottom,rounded-left,rounded-circle,|}" alt="notes"/> 
+        </div> */}
+          
+        <div className='container mt-5'>
+            <div className='forms-container'>
+              <div className='row-sm-5'>
+                <form onSubmit={loginSubmit}>
+                   <h2 className='title text-center'>Log in</h2>
+                   <div className='form-group '>
+                       <input type={'email'} placeholder='Email' required name='email' className='form-control' value={user.email} onChange={onChangeInput}></input>
+                   </div>
+    
+                   <div className='form-group '>
+                       <input type={'password'} placeholder='password' required name='password' className='form-control' value={user.password} onChange={onChangeInput}></input>
+                   </div>
+                   {error && <div className='text-center text-danger'><p>{error}</p></div>}
+                       <div className='text-center'><input type={'submit'} value="Login" className='text-center btn btn-primary'></input></div>
+                </form>
+                 
+                </div>
+               
+            </div>
+            <div className="text-center p-5">
+              <p>Click here to <Link to={'/register'}>Sign Up</Link></p>
+            </div>
+        </div>
+        </div>
+      )
+}
+
+export default Login
